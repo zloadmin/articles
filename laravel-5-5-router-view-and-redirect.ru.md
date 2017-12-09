@@ -22,3 +22,5 @@
 Третий параметр принимает код состояния, по умолчанию 301. Вы также можете его изменить. К примеру вы хотите установить временное перенаправление с статус кодом 307 `307 Temporary Redirect (временное перенаправление)`, это будет выглядить так:
 
     Route::redirect('/old-about', '/about', 307);
+
+Источник: [https://laravel-news.com/laravel-5-5-router-view-and-redirect](https://laravel-news.com/laravel-5-5-router-view-and-redirect)

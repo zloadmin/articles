@@ -28,3 +28,5 @@ The third default argument, if not passed, is a `301` redirect. However, you can
 Laravel 5.5 is chalk-full of great new features; you can learn more by visiting our [coverage of Laravel 5.5](https://laravel-news.com/category/laravel-5.5) and the [official release notes](https://laravel.com/docs/5.5/releases).
 
 This appeared first on [Laravel News](https://laravel-news.com)
+
+Source: [https://laravel-news.com/laravel-5-5-router-view-and-redirect](https://laravel-news.com/laravel-5-5-router-view-and-redirect)

@@ -158,4 +158,4 @@ Another recommended resource is learning about all the nifty [Laravel helpers](h
 
 This appeared first on [Laravel News](https://laravel-news.com)
 
-Original: [https://laravel-news.com/creating-helpers](https://laravel-news.com/creating-helpers)
+Source: [https://laravel-news.com/creating-helpers](https://laravel-news.com/creating-helpers)
