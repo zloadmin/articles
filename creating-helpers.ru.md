@@ -1,29 +1,29 @@
-# Creating Your Own PHP Helpers in a Laravel Project
+# Создание собственных PHP функций в Laravel проекте
 
-Laravel provides many excellent [helper functions](https://laravel.com/docs/5.5/helpers) that are convenient for doing things like working with arrays, file paths, strings, and routes, among other things like the beloved `dd()` function.
+В Laravel есть много отличных функций которые упрощают работу с  массивами, путями, строками, маршрутами, и прочими вещами - например любимая функция `dd()`.
 
-You can also define your own set of helper functions for your Laravel applications and PHP packages, by using Composer to import them automatically.
+Вы можете создать и свои собственные функции для вашего Laravel приложения и PHP пакета, используя Composer для автоматического импорта их.
 
-If you are new to Laravel or PHP, let’s walk through how you might go about creating your own helper functions that automatically get loaded by Laravel.
+Если вы новичок в Laravel или PHP давайте пройдемся по всему процессу создания собственных PHP функций которые будут автоматически подгружаться в Laravel'ом.
 
-## Creating a Helpers file in a Laravel App
+## Создание файла с функциями в Laravel
 
-The first scenario you might want to include your helper functions is within the context of a Laravel application. Depending on your preference, you can organize the location of your helper file(s) however you want, however, here are a few suggested locations:
+Для начала вы должны включить функции в контекст вашего Laravel приложения. В зависимости от ваших предпочтений, вы можете организовать хранение ваших файлов с функциями там где вы хотите, вот несколько предложеных мест:
 
 *   `app/helpers.php`
 *   `app/Http/helpers.php`
 
-I prefer to keep mine in `app/helpers.php` in the root of the application namespace.
+Я предпочитаю хранить их так `app/helpers.php` в корне пространства имен приложения.
 
-### Autoloading
+### Автозагрузка
 
-To use your PHP helper functions, you need to load them into your program at runtime. In the early days of my career, it wasn’t uncommon to see this kind of code at the top of a file:
+Для использования ваших функций, вам нужно загрузить их в рантайм (жизненный цикл приложения). В начале моей карьеры я часто видел этот код в начале файла:
 
     require_once ROOT . '/helpers.php';
 
-PHP functions cannot be autoloaded. However, we have a much better solution through Composer than using `require` or `require_once`.
+PHP функции не могут автоматически подгружаться. Однако, у нас есть более лучшее решение с использованием Composer нежели использование `require` или `require_once`.
 
-If you create a new Laravel project, you will see an `autoload` and `autoload-dev` keys in the `composer.json` file:
+Если вы создадите новый Laravel проект вы увидите параметры `autoload` и `autoload-dev` в файле `composer.json`:
 
     "autoload": {
         "classmap": [
@@ -40,7 +40,7 @@ If you create a new Laravel project, you will see an `autoload` and `autoload-de
         }
     },
 
-If you want to add a helpers file, composer has a `files` key (which is an array of file paths) that you can define inside of `autoload`:
+Если мы хотим добавить свой файл с функциями, то в Composer для этого есть параметр `files` (который состоит из массива путей к файлам) который вы можете определить внутри параметра `autoload`:
 
     "autoload": {
         "files": [
@@ -55,17 +55,18 @@ If you want to add a helpers file, composer has a `files` key (which is an array
         }
     },
 
-Once you add a new path to the `files` array, you need to dump the autoloader:
+Когда вы добавили новый путь в параметр `files`, вам нужно обновить авто-загрузчик выполнив:
 
     composer dump-autoload
 
-Now on every request the helpers.php file will be loaded automatically because Laravel requires Composer’s autoloader in `public/index.php`:
+Теперь при каждом запросе файл `helpers.php` будет подгружаться автоматически так как Laravel загружает Composer’овский авто-загрузчик в `public/index.php`:
 
     require __DIR__.'/../vendor/autoload.php';
 
-### Defining Functions
 
-Defining functions in your helpers class is the easy part, although, there are a few caveats. All of the Laravel helper files are wrapped in a check to avoid function definition collisions:
+### Определение функций
+
+Определение функций задача не сложная, хотя есть несколько предостережений. Все функции в Laravel обернуты специальной проверкой которая исключает вероятность коллизий:
 
     if (! function_exists('env')) {
         function env($key, $default = null) {
@@ -73,26 +74,26 @@ Defining functions in your helpers class is the easy part, although, there are a
         }
     }
 
-This can get tricky, because you can run into situations where you are using a function definition that you did not expect based on which one was defined first.
+Хотя тут может быть подвох, потому что мы можем выполнить функцию в ситуации когда она уже была определена, до того как мы ее назначили.
 
-I prefer to use `function_exists` checks in my application helpers, but if you are defining helpers within the context of your application, you _could_ forgo the `function_exists` check.
+Я предпочитаю использовать `function_exists` для проверки моих функций, но если вы назначаете функцию в контексте своего приложения, вы _можете_ отказаться от  `function_exists` для проверки.
 
-By skipping the check, you’d see collisions any time your helpers are redefining functions, which could be useful.
+Пропустив проверку вы увидите коллизию всегда когда ваша функция будет переопределять другую, это может быть полезно. 
 
-In practice, collisions don’t tend to happen as often as you’d think, and you should make sure you’re defining function names that aren’t overly generic. You can also prefix your function names to make them less likely to collide with other dependencies.
+На практике, коллизии происходят не так часто как можно подумать, но вы должны быть уверены в том что название вашей функции не слишком общее. В дополнение вы  можете добавить префикс в название вашей функции что понизит шанс коллизий.
 
-### Helper Example
+### Примеры функций
 
-I like the Rails path and URL helpers that you get for free when defining a resourceful route. For example, a `photos` resource route would expose route helpers like `new_photo_path`, edit_photo_path`, etc.
+Мне всегда нравилось как в RoR (Ruby on Rails) сделаны функции для путей и ссылок если вы определили маршрут ресурса. К примеру, для ресурса `photos` будут добавлены функции `new_photo_path`, `edit_photo_path`, и т.д.
 
-When I use resource routing in Laravel, I like to add a few helper functions that make defining routes in my templates easier. In my implementation, I like to have a URL helper function that I can pass an Eloquent model and get a resource route back using conventions that I define, such as:
+Когда я использую ресурсную маршрутизацию в Laravel, я добавляю несколько функций которые упрощают работу с марщрутами в шаблонах. В моей реализации я добавляю функции которым я передаю Eloquent модель и которые возвращают маршрут на ресурс, например:
 
     create_route($model);
     edit_route($model);
     show_route($model);
     destroy_route($model);
 
-Here’s how you might define a `show_route` in your `app/helpers.php` file (the others would look similar):
+Здесь показано как вы можете определить функцию `show_route` в вашем файле `app/helpers.php` (другие будут похоже):
 
     if (! function_exists('show_route')) {
         function show_route($model, $resource = null)
@@ -112,9 +113,10 @@ Here’s how you might define a `show_route` in your `app/helpers.php` file (the
         }
     }
 
-The `plural_from_model()` function is just some reusable code that the helper route functions use to predict the route resource name based on a naming convention that I prefer, which is a kebab-case plural of a model.
 
-For example, here’s an example of the resource name derived from the model:
+Функция `plural_from_model()` это всего лишь код который помогает получить имя ресурса основываясь на соглашениях именования.
+
+Например, тут мы получаем имя ресурса на основе модели:
 
     $model = new App\LineItem;
     plural_from_model($model);
@@ -123,39 +125,33 @@ For example, here’s an example of the resource name derived from the model:
     plural_from_model(new App\User);
     => users
 
-Using this convention you’d define the resource route like so in `routes/web.php`:
+Используя эти соглашения вы можете определять маршруты для ресурсов в файле  `routes/web.php`:
 
     Route::resource('line-items', 'LineItemsController');
     Route::resource('users', 'UsersController');
 
-And then in your blade templates, you could do the following:
+После этого в вашем шаблоне вы можете использовать функции так:
 
     <a href="{{ show_route($lineItem) }}">
         {{ $lineItem->name }}
     </a>
 
-Which would produce something like the following HTML:
+И на выходе вы получите такой HTML код:
 
     <a href="http://localhost/line-items/1">
         Line Item #1
     </a>
 
-## Packages
 
-Your Composer packages can also use a helpers file for any helper functions you want to make available to projects consuming your package.
+## Пакеты
 
-You will take the same approach in the package’s `composer.json` file, defining a `files` key with an array of your helper files.
+Ваши Composer пакеты могут также использовать ваш файл с функциями, для любых функций которые вы хотите сделать доступными, в проекте используемый ваш пакет.
 
-It’s imperative that you add `function_exists()` checks around your helper functions so that projects using your code don’t break due to naming collisions.
+Вы будете использовать тотже подход для файла `composer.json`, определяя параметр `files` как массив ваших файлов с функциями.
 
-You should choose proper function names that are unique to your package, and consider using a short prefix if you are afraid your function name is too generic.
+Обязательно добавьте `function_exists()` в проверку вашей функции для того чтобы проект использующий ваш код не поломался из-за колизий имен.
 
-## Learn More
+Вы должны использовать правильные имена для ваших функций, которые будут уникальными, так же стоит подумать о использовании короткого префикса, если вы боитесь что название ваших функций слишком общее.
 
-Check out Composer’s [autoloading](https://getcomposer.org/doc/04-schema.md#autoload) documentation to learn more about including files, and general information about autoloading classes.
 
-Another recommended resource is learning about all the nifty [Laravel helpers](https://laravel.com/docs/5.5/helpers) available in the framework and learning how they work by checking out the source code for the [Illuminate\Foundation helpers](https://github.com/laravel/framework/blob/5.5/src/Illuminate/Foundation/helpers.php) and the [Illuminate\Support helpers](https://github.com/laravel/framework/blob/5.5/src/Illuminate/Support/helpers.php).
-
-This appeared first on [Laravel News](https://laravel-news.com)
-
-Source: [https://laravel-news.com/creating-helpers](https://laravel-news.com/creating-helpers)
+Источник: [https://laravel-news.com/creating-helpers](https://laravel-news.com/creating-helpers)
